@@ -1,0 +1,108 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+struct Task {
+    int id;
+    std::string description;
+    bool completed;
+};
+
+void displayMenu() {
+    std::cout << "\nSimple C++ Task Manager\n";
+    std::cout << "1. Add Task\n";
+    std::cout << "2. View All Tasks\n";
+    std::cout << "3. Mark Task as Completed\n";
+    std::cout << "4. Delete Task\n";
+    std::cout << "5. Exit\n";
+    std::cout << "Choose an option: ";
+}
+
+void addTask(std::vector<Task> &tasks) {
+    Task newTask;
+    std::cin.ignore();
+    std::cout << "Enter task description: ";
+    std::getline(std::cin, newTask.description);
+    newTask.id = tasks.size() + 1;
+    newTask.completed = false;
+    tasks.push_back(newTask);
+    std::cout << "Task added!\n";
+}
+
+void viewTasks(const std::vector<Task> &tasks) {
+    if (tasks.empty()) {
+        std::cout << "No tasks available.\n";
+        return;
+    }
+
+    std::cout << "\nID\tDescription\t\tCompleted\n";
+    for (const auto &task : tasks) {
+        std::cout << task.id << "\t" << task.description << "\t\t" 
+                  << (task.completed ? "Yes" : "No") << "\n";
+    }
+}
+
+void markTaskCompleted(std::vector<Task> &tasks) {
+    int id;
+    std::cout << "Enter task ID to mark as completed: ";
+    std::cin >> id;
+
+    for (auto &task : tasks) {
+        if (task.id == id) {
+            task.completed = true;
+            std::cout << "Task " << id << " marked as completed!\n";
+            return;
+        }
+    }
+    std::cout << "Task ID not found.\n";
+}
+
+void deleteTask(std::vector<Task> &tasks) {
+    int id;
+    std::cout << "Enter task ID to delete: ";
+    std::cin >> id;
+
+    for (size_t i = 0; i < tasks.size(); ++i) {
+        if (tasks[i].id == id) {
+            tasks.erase(tasks.begin() + i);
+            std::cout << "Task " << id << " deleted!\n";
+
+            // Update IDs of remaining tasks
+            for (size_t j = i; j < tasks.size(); ++j) {
+                tasks[j].id = j + 1;
+            }
+            return;
+        }
+    }
+    std::cout << "Task ID not found.\n";
+}
+
+int main() {
+    std::vector<Task> tasks;
+    int choice;
+
+    while (true) {
+        displayMenu();
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            addTask(tasks);
+            break;
+        case 2:
+            viewTasks(tasks);
+            break;
+        case 3:
+            markTaskCompleted(tasks);
+            break;
+        case 4:
+            deleteTask(tasks);
+            break;
+        case 5:
+            std::cout << "Exiting Task Manager.\n";
+            return 0;
+        default:
+            std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
